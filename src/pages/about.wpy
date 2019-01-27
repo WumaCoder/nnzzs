@@ -1,0 +1,172 @@
+<!-- 关于页面 -->
+<template>
+  <view class='container'>
+    <van-dialog id="van-dialog"></van-dialog>
+      <van-dialog
+      use-slot
+      async-close
+      title="赞赏"
+      show="{{ show }}"
+      bind:close="onCloseIde"
+    >
+    <view class='ideCode'>
+      <!--验证码-->
+      <image src='https://s2.ax1x.com/2019/01/26/kuPAMQ.jpg' @tap="open"/>
+      <view class=''>
+        <!---->
+        点击长按 识别图中二维码 
+      </view>
+    </view>
+  </van-dialog>
+     <view class='logo'>
+         <!--logo-->
+         <image src='../img/logo.png' @tap="open"/>
+         <h2>内农职助手</h2>
+         <h6>v1.0.0</h6>
+     </view>
+     <view class='menu'>
+         <!--菜单-->
+         <view class='btn' @tap="zs">
+             赞赏
+         </view>
+         <view class='btn' @tap="kfz">
+             开发者
+         </view>
+         <view class='btn' @tap="bb">
+             版本信息
+         </view>
+         <view class='btn' @tap="fk">
+             问题反馈
+         </view>
+     </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+
+const methods = require('../mixins/methods');
+import dialog from '../components/vant/dialog/dialog';
+
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '关于我们',
+    navigationBarBackgroundColor: '#64A8D1',
+    navigationBarTextStyle: '#fff',
+    usingComponents: {
+      'van-button': '../components/vant/button/index',
+      'van-notice-bar': '../components/vant/notice-bar/index',
+      'van-icon': '../components/vant/icon/index',
+      'van-panel': '../components/vant/panel/index',
+      'van-field': '../components/vant/field/index',
+      'van-switch': '../components/vant/switch/index',
+      'van-switch-cell': '../components/vant/switch-cell/index',
+      'wxc-abnor': '../components/min/wxc-abnor/dist/index',
+      'van-dialog': '../components/vant/dialog/index'
+    }
+  };
+
+  data = {
+
+    show:false,
+    version: {
+      //版本信息
+      number: '1.0.0',
+      pubdate: '2019.1.27',
+      content:
+        '优化服务器与客户端代码，减少登陆出错的问题.\n\r重新设计ui，让ui更加美观.\n\r增加记住密码、登录格式验证、公告通知、查成绩、查课表、bug反馈等功能.\n\r最后感谢的大家的支持谢谢，如果小程序出现了什么问题您可以去问题反馈，给与我们反馈，我们会在下一版本解决问题。'
+    }
+  };
+
+  components = {};
+
+  methods = {
+    open(){
+      wx.previewImage({
+        urls: ['https://s2.ax1x.com/2019/01/26/kuPAMQ.jpg']
+      });
+    },
+    onCloseIde(){
+      this.show = false;
+    },
+    zs() {
+      this.show =true;
+    },
+    kfz() {
+      dialog.alert({
+        title: `开发者`,
+        message: `WM\n\r\n\rQQ:1829913225\n\r商务合作可以找我`
+      });
+    },
+    bb() {
+      dialog.alert({
+        title: `V${this.version.number}`,
+        message: `${this.version.content}\n\r\n\r${this.version.pubdate}`
+      });
+    },
+    fk() {
+      dialog.alert({
+        title: '问题反馈',
+        message:
+          '请点击右上角的 三个点 然后点 关于内农职助手 然后点 投诉建议，即可对我们进行留言，感谢您的支持。'
+      });
+    }
+  };
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {}
+
+  onShow() {}
+}
+</script>
+
+<style lang='less'>
+.logo {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin: 100px;
+  image {
+    background: #ddd;
+    border: 1px #ddd solid;
+    border-radius: 100px;
+    height: 100px;
+    width: 100px;
+  }
+  h6 {
+    color: rgb(114, 114, 114);
+  }
+}
+.menu {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  .btn {
+    text-align: center;
+    border-top: 1px solid #ddd;
+    font-size: 20px;
+    padding: 10px;
+    background: #fff;
+  }
+}
+
+.ideCode{
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  color: rgb(53, 53, 53);
+  font-size: 16px;
+  image{
+    width: 100%;
+  }
+}
+
+page {
+  background: #fafafa;
+}
+</style>

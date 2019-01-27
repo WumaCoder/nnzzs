@@ -1,0 +1,216 @@
+<!-- 首页 -->
+<template>
+  <view class='container'>
+    <van-dialog id="van-dialog"/>
+    <e-card class="card">
+        <view slot="main" class="card_text">
+            <!--卡片-->
+            <view class="card_lable">学号：{{user.username}}</view>
+            <view class="card_lable">姓名：{{user.name}}</view>
+            <view class="card_lable">年级：{{user.term}}</view>
+        </view>
+        <view slot="main" class="card_menu">
+            <!--隐藏-->
+            <view class='btn' style="background: #d83838;" @tap="outLogin">
+                <!---->
+                退出登录
+            </view>
+        </view>
+    </e-card>
+    <view class='menu'>
+        <!--菜单-->
+        <view class='row'>
+            <!--横向-->
+            <view @tap="navigate('seekScore')" class='item' style="background-image:url('https://s2.ax1x.com/2019/01/23/kAOat0.jpg'); background-size:100% 100%">
+                <!--元素-->
+                <view class='title'>
+                    <!--标题-->
+                    查成绩
+                </view>
+            </view>
+            <view @tap="navigate('seekTimetable')" class='item' style="background:url('https://s2.ax1x.com/2019/01/23/kAOY0s.jpg'); background-size:100% 100%">
+                <!--元素-->
+                <view class='title'>
+                    <!--标题-->
+                    查课表
+                </view>
+            </view>
+        </view>
+        <view class='row'>
+            <!--横向-->
+            <view @tap="navigate('notice')" class='item' style="background:url('https://s2.ax1x.com/2019/01/23/kAOUkq.jpg'); background-size:100% 100%">
+                <!--元素-->
+                <view class='title'>
+                    <!--标题-->
+                    公告信息    
+                </view>
+            </view>
+            <view @tap="navigate('about')" class='item' style="background:url('https://s2.ax1x.com/2019/01/23/kAOt7n.jpg'); background-size:100% 100%">
+                <!--元素-->
+                <view class='title'>
+                    <!--标题-->
+                    关于我们
+                </view>
+            </view>
+        </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import card from '../components/eui/card';
+
+import dialog from '../components/vant/dialog/dialog';
+const methods = require('../mixins/methods');
+
+export default class Main extends wepy.page {
+  config = {
+    navigationBarTitleText: '首页',
+    navigationBarBackgroundColor: '#64A8D1',
+    navigationBarTextStyle: '#fff',
+    usingComponents: {
+      'van-button': '../components/vant/button/index',
+      'van-notice-bar': '../components/vant/notice-bar/index',
+      'van-icon': '../components/vant/icon/index',
+      'van-panel': '../components/vant/panel/index',
+      'van-field': '../components/vant/field/index',
+      'van-switch': '../components/vant/switch/index',
+      'van-switch-cell': '../components/vant/switch-cell/index',
+      'van-dialog': '../components/vant/dialog/index'
+    }
+  };
+
+  data = {
+    user: {
+      username: '',
+      name: '',
+      term: ''
+    }
+  };
+
+  components = {
+    'e-card': card
+  };
+
+  methods = {
+    outLogin() {
+      wepy.redirectTo({ url: 'index' });
+    },
+    navigate(url) {
+      wepy.navigateTo({ url: url });
+    }
+  };
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {
+    //console.log(this);
+    let query = this.$wxpage.options;
+    let that = this;
+    let terms = methods.gen(query.username);
+
+    methods.setStorageJson('Term', terms);//获取学期
+    methods.setStorageJson('Term1',methods.gen(query.username,1));//学期多一个
+    methods
+      .request('/user', 'get', {
+        username: query.username,
+        cookies: methods.getStorageJson('Cookie')
+      })
+      .then(res => {
+        console.log(res);
+        let data = res.data;
+        if (data.success) {
+          that.user.username = query.username;
+          that.user.name = data.data;
+          that.user.term = terms[0].show;
+          that.$apply();
+        } else {
+          dialog.alert({
+            title: '错误信息',
+            message: data.msg
+          });
+        }
+      });
+  }
+
+  onShow() {}
+}
+</script>
+
+<style lang='less'>
+.menu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  .row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    .item {
+      width: 50%;
+      height: 160px;
+      margin: 10px;
+      border: 1px rgb(112, 112, 112) solid;
+      .title {
+        background: rgba(0, 0, 0, 0.507);
+        color: #fff;
+        text-align: center;
+        position: relative;
+        padding: 3px;
+      }
+    }
+  }
+}
+.card {
+  background: #fff;
+  transition: 1s all;
+}
+.card:hover {
+  transform: rotateX(180deg);
+  .card_text {
+    display: none;
+  }
+  .card_menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 100px;
+  }
+}
+.card_text {
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding-left: 10px;
+}
+.card_menu {
+  transform: rotateX(180deg);
+  display: none;
+}
+.card_lable {
+  font-size: 18px;
+}
+
+.container {
+  justify-content: space-around;
+}
+.btn {
+  color: #fff;
+  border-radius: 100px;
+  height: 50px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+page {
+  height: 93%;
+  background: #fafafa;
+}
+</style>

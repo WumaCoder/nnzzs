@@ -1,0 +1,55 @@
+<!-- 卡片 -->
+<template>
+  <view class='card'>
+      <view class='title'>
+          <!--标题-->
+          <h3>{{title}}</h3>
+      </view>
+      <view class='main'>
+          <!--主体-->
+          <slot name="main">
+              默认内容
+          </slot>
+      </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class Card extends wepy.component {
+    props = {
+        title:String
+    };
+
+    data = {};
+
+    components = {};
+
+    methods = {};
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad() { };
+
+    onShow() { };
+  }
+</script>
+
+<style lang='less' scoped>
+    .card{
+        margin: 20px;
+        width: 90%;
+        border-radius: 2px;
+        // border: #dddddd 1px solid;
+        box-shadow: 0 0 3px #b6b6b6;
+        padding: 10px;
+    }
+    .main{
+        font-size: 16px;
+        color: #353535;
+    }
+</style>

@@ -1,0 +1,310 @@
+<!-- 首页 -->
+<template>
+  <view class='container'>
+  <van-dialog id="van-dialog"/>
+  <van-dialog
+      use-slot
+      async-close
+      title="验证码"
+      show="{{ ideCode.show }}"
+      show-cancel-button
+      confirm-button-text="继续"
+      bind:close="onCloseIde"
+    >
+    <view class='ideCode'>
+      <!--验证码-->
+      <image src='{{ideCode.src}}'/>
+      <van-field type="text" placeholder="在这里输入验证码哦" id="ideCode" @input="model"/>
+    </view>
+  </van-dialog>
+  <!-- 对话框 -->
+        <van-notice-bar
+          class="notice_bar"
+          mode="closeable"
+          text="{{notice.content}}"
+          @tap="onClickNotice"
+        />
+        <!-- 通知栏 -->
+        <van-panel title="欢迎使用内农职助手" desc="请输入内网教务管理系统的学号AND密码，进行登陆。"  use-footer-slot class="panel">
+          <!-- 登录 -->
+          <view>
+            <van-cell-group>
+              <van-field
+                value="{{ user.username }}"
+                required="{{!user.username}}"
+                error-message="{{user.username || !openHint?'':'学号不能为空！'}}"
+                clearable
+                label="学号"
+                icon="question-o"
+                placeholder="请输入学号"
+                bind:click-icon="onClickIcon"
+                id="username"
+                @input="model"
+              />
+              <van-field
+                id="password"
+                @input="model"
+                value="{{ user.password }}"
+                type="password"
+                label="密码"
+                placeholder="请输入密码"
+                required="{{!user.password}}"
+                clearable
+                error-message="{{user.password || !openHint?'':'密码不能为空！'}}"
+              />
+            </van-cell-group>
+            <view class="login_config">
+              <van-switch-cell
+                class="switch_cell"
+                title="记住密码"
+                checked="{{ user.forget }}"
+                bind:change="forget"
+                size="18px"
+              />
+            </view>
+          </view>
+          <view slot="footer">
+            <van-button class="btn_parmary" round size="small" block type="primary" bind:click="login()">登录</van-button>
+          </view>
+        </van-panel>
+        <view class='version' @tap="onClickVersion">
+          <!--版本信息-->
+          {{version.pubdate}}
+        </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import dialog from '../components/vant/dialog/dialog';
+let methods = require('../mixins/methods');
+methods.wx = wx;
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '内农职助手',
+    usingComponents: {
+      'van-button': '../components/vant/button/index',
+      'van-notice-bar': '../components/vant/notice-bar/index',
+      'van-icon': '../components/vant/icon/index',
+      'van-panel': '../components/vant/panel/index',
+      'van-field': '../components/vant/field/index',
+      'van-switch': '../components/vant/switch/index',
+      'van-switch-cell': '../components/vant/switch-cell/index',
+      'van-dialog': '../components/vant/dialog/index'
+    }
+  };
+
+  data = {
+    user: {
+      //用户数据，一会要提交
+      username: '',
+      password: '',
+      ideCode: '',
+      forget: false
+    },
+    openHint: false, //合格验证开关
+    notice: {
+      //公告栏显示的信息
+      pubdate: '2019 1 27', //发布时间
+      title: '公告信息',
+      content:
+        '内农职助手公测版发布，和内网无缝连接，方便大家在公网免费查课表、查成绩。如果觉得本应用对您有用，您可以去【关于我们】给我们【赞赏】，毕竟马老板不会给我免费使用服务器。（该小程序需要公网的服务器与内网服务器通信，内网服务器是老师提供，很感谢老师对我的支持），如果有什么问题也可以去右上角的 【三个点】去【反馈意见】。感谢支持.'
+    },
+    version: {
+      //版本信息
+      number: '1.0.0',
+      pubdate: '2019.1.27',
+      content:
+        '优化服务器与客户端代码，减少登陆出错的问题.\n\r重新设计ui，让ui更加美观.\n\r增加记住密码、登录格式验证、公告通知、查成绩、查课表、bug反馈等功能.\n\r最后感谢的大家的支持谢谢，如果小程序出现了什么问题您可以去问题反馈，给与我们反馈，我们会在下一版本解决问题。'
+    },
+    ideCode: {
+      //验证码对话框
+      show: false,
+      src: ''
+    }
+  };
+
+  components = {};
+
+  methods = {
+    onCloseIde(e) {
+      e = e.detail;
+      let that = this;
+      if (e == 'confirm') {
+        // 继续
+        console.log(this.user);
+        methods
+          .request('/login', 'get', {
+            user: this.user,
+            cookies: methods.getStorageJson('Cookie'),
+            indi: methods.getStorageJson('indi')
+          })
+          .then(res => {
+            console.log(res);
+            let data = res.data;
+            if (data.success) {
+              wepy.redirectTo({ url: 'main?username=' + that.user.username });
+            } else {
+              dialog.alert({
+                title: '登录错误',
+                message: data.msg
+              });
+            }
+            that.ideCode.show = false;
+            that.$apply();
+          })
+          .catch(err => {
+            console.log(err);
+            that.ideCode.show = false;
+            dialog.alert({
+              title: '网络错误',
+              message: '可能是您的网络出现了错误,或是服务器没有对您回应。'
+            });
+            that.$apply();
+          });
+      } else {
+        // 取消
+        this.ideCode.show = false;
+      }
+    },
+    onClickVersion() {
+      dialog.alert({
+        title: `V${this.version.number}`,
+        message: `${this.version.content}\n\r\n\r${this.version.pubdate}`
+      });
+    },
+    onClickNotice() {
+      dialog.alert({
+        title: this.notice.title,
+        message: this.notice.content + '\n\r\n\r' + this.notice.pubdate
+      });
+    },
+    onClickIcon() {
+      //点击问好图标
+      dialog
+        .alert({
+          title: '帮助信息',
+          message: '学号与密码不能为空'
+        })
+        .then(() => {
+          // on close
+        });
+    },
+    login() {
+      //console.log(this.data);
+      this.openHint = true;
+      let that = this;
+      let user = this.user;
+      if (this.data.user.forget) {
+        //记住密码
+        methods.setStorageJson('config', this.data.user); //保存用户信息
+      }
+      if (user.username && user.password) {
+        // 格式正确，获取验证码
+        wx.showLoading({
+          title: '登录中',
+          mask: true
+        });
+        methods
+          .request('/ideCode', 'get')
+          .then(res => {
+            console.log(res);
+            let body = res.data;
+            wx.hideLoading();
+            if (body.success) {
+              that.ideCode.show = true;
+              that.ideCode.src = body.data;
+              methods.setStorageJson('Cookie', body.cookies);
+              methods.setStorageJson('indi', body.indi);
+              that.$apply();
+            } else {
+              dialog.alert({
+                title: '错误信息',
+                message: body.msg
+              });
+            }
+          })
+          .catch(err => {
+            console.log(err);
+            wx.hideLoading();
+          });
+      }
+    },
+    model(e) {
+      //双向数据绑定，需要给组件设置id，id必须与变量名相同
+      //console.log(e);
+      this.data.user[e.target.id] = e.detail;
+    },
+    forget(e) {
+      //忘记密码开关
+      //console.log(e);
+      this.user.forget = e.detail;
+      if (e.detail) {
+        methods.setStorageJson('config', this.user);
+      } else {
+        wx.removeStorageSync('config');
+      }
+    }
+  };
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {
+    let config = methods.getStorageJson('config');
+
+    if (config) {
+      if (config.forget) {
+        this.user = config;
+      }
+    }
+  }
+
+  onShow() {}
+}
+</script>
+
+<style lang='less'>
+.ideCode {
+  width: 100%;
+  image {
+    background: #ddd;
+    height: 160px;
+    width: 100%;
+  }
+  input {
+    margin: 5px;
+    height: 30px;
+    text-align: center;
+    background: rgb(248, 248, 248);
+  }
+}
+.notice_bar,
+.panel {
+  width: 100%;
+}
+.panel {
+  .login_config {
+    .switch_cell {
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+.btn_parmary {
+}
+.version {
+  position: fixed;
+  bottom: 0;
+  background: #009999;
+  font-family: '幼圆';
+  color: #fff;
+  width: 100%;
+  text-align: center;
+  padding: 4px;
+}
+</style>

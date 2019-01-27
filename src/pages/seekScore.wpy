@@ -1,0 +1,240 @@
+<!-- 查询成绩 -->
+<template>
+  <view class='container'>
+      <van-dialog id="van-dialog"></van-dialog>
+      <view class='header'>
+          <!--顶部选择-->
+          <view class='up' @tap="select(1)">
+              <!--上一学期-->
+              <van-icon name="arrow-up" color="#fff"/>
+          </view>
+          <view class='select'>
+              <!--学期选择器-->
+              <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
+                <view class="picker">
+                 {{array[index]}}
+                </view>
+              </picker>
+          </view>
+          <view class='down' @tap="select(-1)">
+              <!--下一学期-->
+              <van-icon name="arrow-down" color="#fff"/>
+          </view>
+      </view>
+      <view class='main'>
+          <!--中间显示图片-->
+          <image src="{{src}}" @tap="open"/>
+          <view class='text'>
+              <!--提升-->
+              点击图片即可放大查看哦
+          </view>
+      </view>
+      <view class='floot'>
+          <!--底部操作-->
+          <view class='share'>
+              <!--分享-->   
+              <van-icon name="share" @tap="share"/>
+          </view>
+          <view class='open' @tap="open">
+              <!--查看-->
+              <van-icon name="expand-o"/>
+          </view>
+          <view class='question' @tap="question">
+              <!--保存-->
+              <van-icon name="question-o"/>
+          </view>
+      </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import dialog from '../components/vant/dialog/dialog';
+
+const methods = require('../mixins/methods');
+methods.wx = wx;
+export default class SeekScore extends wepy.page {
+  config = {
+    navigationBarTitleText: '查成绩',
+    navigationBarBackgroundColor: '#64A8D1',
+    navigationBarTextStyle: '#fff',
+    usingComponents: {
+      'van-button': '../components/vant/button/index',
+      'van-notice-bar': '../components/vant/notice-bar/index',
+      'van-icon': '../components/vant/icon/index',
+      'van-panel': '../components/vant/panel/index',
+      'van-field': '../components/vant/field/index',
+      'van-switch': '../components/vant/switch/index',
+      'van-switch-cell': '../components/vant/switch-cell/index',
+      'wxc-abnor': '../components/min/wxc-abnor/dist/index',
+      'van-dialog': '../components/vant/dialog/index'
+    }
+  };
+
+  data = {
+    array: [],
+    index: 0,
+    terms: [],
+    src: ''
+  };
+
+  components = {};
+
+  methods = {
+    share() {
+      dialog.alert({
+        title: '分享',
+        message:
+          '您可以点击图片放大后，长按发送给您的朋友。后续会更新这个功能。'
+      });
+    },
+    question() {
+      dialog.alert({
+        title: '帮助信息',
+        message:
+          '您可以点击图片放大后，长按保存您的成绩单。\n\r如果成绩单加载失败您可以重新加载。\n\r如果您有其他问题请可以去关于我们反馈，谢谢您的使用。'
+      });
+    },
+    open() {
+      wx.previewImage({
+        urls: [this.src]
+      });
+    },
+    select(e) {
+      e = Math.floor(e);
+      let index = Math.floor(this.index);
+      this.index = index;
+
+      index += e;
+      if (index >= 0 && index <= this.array.length - 1) {
+        this.index += e;
+        this.$apply();
+      } else {
+        wx.showToast({
+          title: '到底了',
+          icon: 'none'
+        });
+      }
+    },
+    bindPickerChange(e) {
+      //下拉列表
+      let index = e.detail.value;
+      this.index = index;
+    }
+  };
+
+  events = {};
+
+  watch = {
+    index(e, old) {
+      let term = this.terms[e];
+      let that = this;
+      //   console.log(term, e, old);
+
+      methods.getScore(term.xn, term.xq, term.xn * 100 + term.xq).then(res => {
+        if (res.success) {
+          that.src = res.data;
+        } else {
+          dialog.alert({
+            title: '获取失败',
+            message: res.msg
+          });
+        }
+        that.$apply();
+      });
+    }
+  };
+
+  computed = {};
+
+  onLoad() {
+    let terms = methods.getStorageJson('Term'); //读取学期列表
+    let that = this;
+    terms.forEach(item => {
+      that.array.push(item.show);
+    });
+    this.terms = terms;
+    let term = terms[0];
+
+    methods.getScore(term.xn, term.xq, term.xn * 10 + term.xq).then(res => {
+      if (res.success) {
+        that.src = res.data;
+        that.$apply();
+      } else {
+        dialog.alert({
+          title: '获取失败',
+          message: res.msg
+        });
+      }
+    });
+    this.$apply();
+  }
+
+  onShow() {}
+}
+</script>
+
+<style lang='less'>
+.floot {
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 40px;
+  color: #fff;
+  .share,
+  .open,
+  .question {
+    background: rgb(255, 196, 0);
+    border-radius: 100px;
+    height: 60px;
+    width: 65px;
+    padding-top: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+  }
+}
+.main {
+  width: 100%;
+  .text{
+      font-size: 15px;
+      text-align: center;
+      color: #414141;
+  }
+  image {
+    width: 100%;
+    background: #ddd;
+  }
+}
+
+.header {
+  width: 100%;
+  height: 40px;
+  background: #64a8d1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  .up,
+  .down {
+    font-size: 26px;
+    padding: 0 10px;
+  }
+  .select,
+  picker {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    color: #2e2e2e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px #ddd solid;
+  }
+}
+page {
+  background: #fafafa;
+}
+</style>
