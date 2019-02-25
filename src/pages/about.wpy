@@ -52,7 +52,7 @@ export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '关于我们',
     navigationBarBackgroundColor: '#64A8D1',
-    navigationBarTextStyle: '#fff',
+    navigationBarTextStyle: 'white',
     usingComponents: {
       'van-button': '../components/vant/button/index',
       'van-notice-bar': '../components/vant/notice-bar/index',

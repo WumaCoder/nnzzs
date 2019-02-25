@@ -57,7 +57,7 @@ export default class SeekScore extends wepy.page {
   config = {
     navigationBarTitleText: '查成绩',
     navigationBarBackgroundColor: '#64A8D1',
-    navigationBarTextStyle: '#fff',
+    navigationBarTextStyle: 'white',
     usingComponents: {
       'van-button': '../components/vant/button/index',
       'van-notice-bar': '../components/vant/notice-bar/index',
