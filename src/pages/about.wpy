@@ -26,17 +26,17 @@
      </view>
      <view class='menu'>
          <!--菜单-->
-         <view class='btn' @tap="zs">
-             赞赏
+         <view class='btn' @tap="zs">             
+             <button>赞赏</button>
          </view>
-         <view class='btn' @tap="kfz">
-             开发者
+         <view class='btn' @tap="kfz">             
+             <button>开发者</button>
          </view>
          <view class='btn' @tap="bb">
-             版本信息
+             <button>版本信息</button>
          </view>
-         <view class='btn' @tap="fk">
-             问题反馈
+         <view class='btn'>
+             <button open-type="feedback">问题反馈</button>
          </view>
      </view>
   </view>
@@ -150,8 +150,12 @@ export default class Example extends wepy.page {
     text-align: center;
     border-top: 1px solid #ddd;
     font-size: 20px;
-    padding: 10px;
-    background: #fff;
+    padding: 5px 10px;
+    //background: #fff;
+    button{
+      background: #fff;;
+      border-radius: 0px;
+    }
   }
 }
 

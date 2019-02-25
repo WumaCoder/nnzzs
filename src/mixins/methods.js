@@ -112,19 +112,26 @@ let getScore = (xn, xq, xnxq) => {
         mask: true
     });
     return new Promise((resolve) => {
-        request('/getScore', 'get', { data: { xn, xq, xnxq }, cookies: getStorageJson('Cookie') }).then(res => {
-            console.log(res);
-            wx.hideLoading();
-            let data = res.data;
-            resolve(data);
-        }).catch(res => {
-            wx.hideLoading();
-            wx.showToast({
-                title: '网络错误',
-                icon: 'fail',
-                duration: 2000
+        let next = true;
+        while (next) {
+            request('/getScore', 'get', { data: { xn, xq, xnxq }, cookies: getStorageJson('Cookie') }).then(res => {
+                //console.log(res);
+                let data = res.data;
+                if (data.success==1 || data.success==0) {
+                    wx.hideLoading();
+                    next = false;
+                    resolve(data);
+                }
+            }).catch(res => {
+                next = false;
+                wx.hideLoading();
+                wx.showToast({
+                    title: '网络错误',
+                    icon: 'fail',
+                    duration: 2000
+                })
             })
-        })
+        }
     })
 }
 
@@ -134,19 +141,26 @@ let getTimetable = (xn, xq, xnxq) => {
         mask: true
     });
     return new Promise((resolve) => {
-        request('/getTimetable', 'get', { data: { xn, xq, xnxq }, cookies: getStorageJson('Cookie') }).then(res => {
-            console.log(res);
-            wx.hideLoading();
-            let data = res.data;
-            resolve(data);
-        }).catch(res => {
-            wx.hideLoading();
-            wx.showToast({
-                title: '网络错误',
-                icon: 'fail',
-                duration: 2000
+        let next = true;
+        while (next) {
+            request('/getTimetable', 'get', { data: { xn, xq, xnxq }, cookies: getStorageJson('Cookie') }).then(res => {
+                //console.log(res);
+                let data = res.data;
+                if (data.success==1 || data.success==0) {
+                    wx.hideLoading();
+                    next = false;
+                    resolve(data);
+                }
+            }).catch(res => {
+                next = false;
+                wx.hideLoading();
+                wx.showToast({
+                    title: '网络错误',
+                    icon: 'fail',
+                    duration: 2000
+                })
             })
-        })
+        }
     })
 }
 

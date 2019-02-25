@@ -113,29 +113,12 @@ export default class Main extends wepy.page {
     let query = this.$wxpage.options;
     let that = this;
     let terms = methods.gen(query.username);
-
-    methods.setStorageJson('Term', terms);//获取学期
-    methods.setStorageJson('Term1',methods.gen(query.username,1));//学期多一个
-    methods
-      .request('/user', 'get', {
-        username: query.username,
-        cookies: methods.getStorageJson('Cookie')
-      })
-      .then(res => {
-        console.log(res);
-        let data = res.data;
-        if (data.success) {
-          that.user.username = query.username;
-          that.user.name = data.data;
-          that.user.term = terms[0].show;
-          that.$apply();
-        } else {
-          dialog.alert({
-            title: '错误信息',
-            message: data.msg
-          });
-        }
-      });
+    that.user.username = query.username;
+    that.user.name = query.name;
+    that.user.term = terms[0].show;
+    that.$apply();
+    methods.setStorageJson('Term', terms); //获取学期
+    methods.setStorageJson('Term1', methods.gen(query.username, 1)); //学期多一个
   }
 
   onShow() {}

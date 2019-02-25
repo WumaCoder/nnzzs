@@ -109,7 +109,7 @@ export default class Index extends wepy.page {
       pubdate: '2019 1 27', //发布时间
       title: '公告信息',
       content:
-        '内农职助手公测版发布，和内网无缝连接，方便大家在公网免费查课表、查成绩。如果觉得本应用对您有用，您可以去【关于我们】给我们【赞赏】，毕竟马老板不会给我免费使用服务器。（该小程序需要公网的服务器与内网服务器通信，内网服务器是老师提供，很感谢老师对我的支持），如果有什么问题也可以去右上角的 【三个点】去【反馈意见】。感谢支持.'
+        '内农职助手公测版发布，和内网无缝连接，方便大家在公网免费查课表、查成绩。如果觉得本应用对您有用，您可以去【关于我们】给我们【赞赏】，毕竟马老板不会给我免费使用服务器。（该小程序需要公网的服务器与内网服务器通信，内网服务器是老师提供），如果有什么问题也可以去右上角的 【三个点】去【反馈意见】。感谢支持.'
     },
     version: {
       //版本信息
@@ -128,41 +128,56 @@ export default class Index extends wepy.page {
   components = {};
 
   methods = {
-    onCloseIde(e) {
+    async onCloseIde(e) {
       e = e.detail;
       let that = this;
       if (e == 'confirm') {
         // 继续
-        console.log(this.user);
-        methods
-          .request('/login', 'get', {
-            user: this.user,
-            cookies: methods.getStorageJson('Cookie'),
-            indi: methods.getStorageJson('indi')
-          })
-          .then(res => {
-            console.log(res);
+        //console.log(this.user);
+        try {
+          let next = true;
+          while (next) {
+            let res = await methods.request('/login', 'get', {
+              user: this.user,
+              cookies: methods.getStorageJson('Cookie'),
+              indi: methods.getStorageJson('indi')
+            });
+
             let data = res.data;
             if (data.success) {
-              wepy.redirectTo({ url: 'main?username=' + that.user.username });
+              if (data.success == 1) {
+                wepy.redirectTo({
+                  url:
+                    'main?username=' + that.user.username + '&name=' + data.data
+                });
+                next = false;
+                break;
+                that.ideCode.show = false;
+                that.$apply();
+              }
+              wx.showToast({
+                title: '排队中,请稍等',
+                icon: 'loading'
+              });
             } else {
               dialog.alert({
                 title: '登录错误',
                 message: data.msg
               });
+              that.ideCode.show = false;
+              that.$apply();
+              next = false;
             }
-            that.ideCode.show = false;
-            that.$apply();
-          })
-          .catch(err => {
-            console.log(err);
-            that.ideCode.show = false;
-            dialog.alert({
-              title: '网络错误',
-              message: '可能是您的网络出现了错误,或是服务器没有对您回应。'
-            });
-            that.$apply();
+          }
+        } catch (err) {
+          console.log(err);
+          that.ideCode.show = false;
+          dialog.alert({
+            title: '网络错误',
+            message: '可能是您的网络出现了错误,或是服务器没有对您回应。'
           });
+          that.$apply();
+        }
       } else {
         // 取消
         this.ideCode.show = false;
@@ -191,7 +206,7 @@ export default class Index extends wepy.page {
           // on close
         });
     },
-    login() {
+    async login() {
       //console.log(this.data);
       this.openHint = true;
       let that = this;
@@ -206,29 +221,40 @@ export default class Index extends wepy.page {
           title: '登录中',
           mask: true
         });
-        methods
-          .request('/ideCode', 'get')
-          .then(res => {
-            console.log(res);
+        try {
+          let next = true;
+
+          while (next) {
+            let res = await methods.request('/ideCode', 'get');
             let body = res.data;
-            wx.hideLoading();
             if (body.success) {
-              that.ideCode.show = true;
-              that.ideCode.src = body.data;
-              methods.setStorageJson('Cookie', body.cookies);
-              methods.setStorageJson('indi', body.indi);
-              that.$apply();
+              if (body.success == 1) {
+                that.ideCode.show = true;
+                next = false;
+                that.ideCode.src = body.data;
+                methods.setStorageJson('Cookie', body.cookies);
+                methods.setStorageJson('indi', body.indi);
+                wx.hideLoading();
+                that.$apply();
+              }
             } else {
               dialog.alert({
                 title: '错误信息',
                 message: body.msg
               });
+              wx.hideLoading();
+              next = false;
             }
-          })
-          .catch(err => {
-            console.log(err);
-            wx.hideLoading();
+            // console.log(res);
+          }
+        } catch (err) {
+          console.log(err);
+          wx.hideLoading();
+          dialog.alert({
+            title: '网络错误',
+            message: '网络发生故障，或者服务器故障'
           });
+        }
       }
     },
     model(e) {
