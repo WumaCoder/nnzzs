@@ -1,5 +1,5 @@
 import wepy from "wepy";
-let host = "https://wmtest.xyz:8000";
+let host = "https://wmtest.xyz:8000/nnz";
 
 /**
  * 
@@ -111,25 +111,27 @@ let getScore = (xn, xq, xnxq) => {
         title: "加载成绩单中",
         mask: true
     });
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
         let next = true;
-        while (next) {
-            request('/getScore', 'get', { data: { xn, xq, xnxq }, cookies: getStorageJson('Cookie') }).then(res => {
-                //console.log(res);
+        try {
+            while (next) {
+                let res = await request('/getScore', 'get', { data: { xn, xq, xnxq }, cookies: getStorageJson('Cookie') });
                 let data = res.data;
-                if (data.success==1 || data.success==0) {
+                if (data.stateCode == 1 || data.stateCode == 0) {
                     wx.hideLoading();
                     next = false;
                     resolve(data);
                 }
-            }).catch(res => {
-                next = false;
-                wx.hideLoading();
-                wx.showToast({
-                    title: '网络错误',
-                    icon: 'fail',
-                    duration: 2000
-                })
+                console.log(res);
+                
+            }
+        } catch (err) {
+            next = false;
+            wx.hideLoading();
+            wx.showToast({
+                title: '网络错误',
+                icon: 'fail',
+                duration: 2000
             })
         }
     })
@@ -140,25 +142,27 @@ let getTimetable = (xn, xq, xnxq) => {
         title: "加载课程表中",
         mask: true
     });
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
         let next = true;
-        while (next) {
-            request('/getTimetable', 'get', { data: { xn, xq, xnxq }, cookies: getStorageJson('Cookie') }).then(res => {
-                //console.log(res);
+        try {
+            while (next) {
+                let res = await request('/getTimetable', 'get', { data: { xn, xq, xnxq }, cookies: getStorageJson('Cookie') });
                 let data = res.data;
-                if (data.success==1 || data.success==0) {
+                if (data.stateCode == 1 || data.stateCode == 0) {
                     wx.hideLoading();
                     next = false;
                     resolve(data);
                 }
-            }).catch(res => {
-                next = false;
-                wx.hideLoading();
-                wx.showToast({
-                    title: '网络错误',
-                    icon: 'fail',
-                    duration: 2000
-                })
+                console.log(res);
+                
+            }
+        } catch (err) {
+            next = false;
+            wx.hideLoading();
+            wx.showToast({
+                title: '网络错误',
+                icon: 'fail',
+                duration: 2000
             })
         }
     })

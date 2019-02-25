@@ -132,7 +132,7 @@ export default class SeekScore extends wepy.page {
       //   console.log(term, e, old);
 
       methods.getTimetable(term.xn, term.xq, term.xn * 10 + term.xq).then(res => {
-        if (res.success) {
+        if (res.stateCode) {
           that.src = res.data;
         } else {
           dialog.alert({
@@ -157,7 +157,7 @@ export default class SeekScore extends wepy.page {
     let term = terms[0];
 
     methods.getTimetable(term.xn, term.xq, term.xn * 10 + term.xq).then(res => {
-      if (res.success) {
+      if (res.stateCode) {
         that.src = res.data;
         that.$apply();
       } else {

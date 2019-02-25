@@ -132,7 +132,7 @@ export default class SeekScore extends wepy.page {
       //   console.log(term, e, old);
 
       methods.getScore(term.xn, term.xq, term.xn * 100 + term.xq).then(res => {
-        if (res.success) {
+        if (res.stateCode) {
           that.src = res.data;
         } else {
           dialog.alert({
@@ -150,6 +150,8 @@ export default class SeekScore extends wepy.page {
   onLoad() {
     let terms = methods.getStorageJson('Term'); //读取学期列表
     let that = this;
+    console.log(terms);
+    
     terms.forEach(item => {
       that.array.push(item.show);
     });
@@ -157,7 +159,7 @@ export default class SeekScore extends wepy.page {
     let term = terms[0];
 
     methods.getScore(term.xn, term.xq, term.xn * 10 + term.xq).then(res => {
-      if (res.success) {
+      if (res.stateCode) {
         that.src = res.data;
         that.$apply();
       } else {

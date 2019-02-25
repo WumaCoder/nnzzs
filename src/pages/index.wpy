@@ -134,8 +134,8 @@ export default class Index extends wepy.page {
       if (e == 'confirm') {
         // 继续
         //console.log(this.user);
+        let next = true;
         try {
-          let next = true;
           while (next) {
             let res = await methods.request('/login', 'get', {
               user: this.user,
@@ -144,8 +144,8 @@ export default class Index extends wepy.page {
             });
 
             let data = res.data;
-            if (data.success) {
-              if (data.success == 1) {
+            if (data.stateCode) {
+              if (data.stateCode == 1) {
                 wepy.redirectTo({
                   url:
                     'main?username=' + that.user.username + '&name=' + data.data
@@ -176,6 +176,7 @@ export default class Index extends wepy.page {
             title: '网络错误',
             message: '可能是您的网络出现了错误,或是服务器没有对您回应。'
           });
+          next = false;
           that.$apply();
         }
       } else {
@@ -221,26 +222,25 @@ export default class Index extends wepy.page {
           title: '登录中',
           mask: true
         });
+        let next = true;
         try {
-          let next = true;
-
           while (next) {
             let res = await methods.request('/ideCode', 'get');
-            let body = res.data;
-            if (body.success) {
-              if (body.success == 1) {
+            let data = res.data;
+            if (data.stateCode) {
+              if (data.stateCode == 1) {
                 that.ideCode.show = true;
                 next = false;
-                that.ideCode.src = body.data;
-                methods.setStorageJson('Cookie', body.cookies);
-                methods.setStorageJson('indi', body.indi);
+                that.ideCode.src = data.data;
+                methods.setStorageJson('Cookie', data.cookies);
+                methods.setStorageJson('indi', data.indi);
                 wx.hideLoading();
                 that.$apply();
               }
             } else {
               dialog.alert({
                 title: '错误信息',
-                message: body.msg
+                message: data.msg
               });
               wx.hideLoading();
               next = false;
@@ -249,6 +249,7 @@ export default class Index extends wepy.page {
           }
         } catch (err) {
           console.log(err);
+          next = false;
           wx.hideLoading();
           dialog.alert({
             title: '网络错误',

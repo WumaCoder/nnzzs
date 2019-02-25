@@ -95,7 +95,7 @@ export default class Example extends wepy.page {
     kfz() {
       dialog.alert({
         title: `开发者`,
-        message: `WM\n\r\n\rQQ:1829913225\n\r商务合作可以找我`
+        message: `WM\n\r\n\rQQ:1829913225\n\r有问题可以Q我\n\r`
       });
     },
     bb() {
