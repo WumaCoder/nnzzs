@@ -20,9 +20,9 @@
   </van-dialog>
      <view class='logo'>
          <!--logo-->
-         <image src='../img/logo.png' @tap="open"/>
+         <image src='../img/logo.png'/>
          <h2>内农职助手</h2>
-         <h6>v1.0.0</h6>
+         <h6>v{{version.number}}</h6>
      </view>
      <view class='menu'>
          <!--菜单-->
@@ -71,10 +71,10 @@ export default class Example extends wepy.page {
     show:false,
     version: {
       //版本信息
-      number: '1.0.0',
-      pubdate: '2019.1.27',
+      number: '1.0.3',
+      pubdate: '2019.3.1',
       content:
-        '优化服务器与客户端代码，减少登陆出错的问题.\n\r重新设计ui，让ui更加美观.\n\r增加记住密码、登录格式验证、公告通知、查成绩、查课表、bug反馈等功能.\n\r最后感谢的大家的支持谢谢，如果小程序出现了什么问题您可以去问题反馈，给与我们反馈，我们会在下一版本解决问题。'
+        '增加图片加载失败显示的失败原因以及背景图\n\r最后感谢的大家的支持谢谢，如果小程序出现了什么问题您可以去问题反馈，给与我们反馈，我们会在下一版本解决问题。'
     }
   };
 

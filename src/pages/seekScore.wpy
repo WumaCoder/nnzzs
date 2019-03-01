@@ -75,7 +75,7 @@ export default class SeekScore extends wepy.page {
     array: [],
     index: 0,
     terms: [],
-    src: ''
+    src: '../img/picture.png'
   };
 
   components = {};
@@ -133,7 +133,14 @@ export default class SeekScore extends wepy.page {
 
       methods.getScore(term.xn, term.xq, term.xn * 100 + term.xq).then(res => {
         if (res.stateCode) {
-          that.src = res.data;
+          if (res.data.indexOf('http') != -1) that.src = res.data;
+          else
+            dialog.alert({
+              title: '获取失败',
+              message: `您【${
+                that.array[that.index]
+              }】这学期的成绩还没有呢，请查看上学期的成绩。`
+            });
         } else {
           dialog.alert({
             title: '获取失败',
@@ -151,7 +158,7 @@ export default class SeekScore extends wepy.page {
     let terms = methods.getStorageJson('Term'); //读取学期列表
     let that = this;
     console.log(terms);
-    
+
     terms.forEach(item => {
       that.array.push(item.show);
     });
@@ -160,7 +167,14 @@ export default class SeekScore extends wepy.page {
 
     methods.getScore(term.xn, term.xq, term.xn * 10 + term.xq).then(res => {
       if (res.stateCode) {
-        that.src = res.data;
+        if (res.data.indexOf('http') != -1) that.src = res.data;
+        else
+          dialog.alert({
+            title: '获取失败',
+            message: `您【${
+              that.array[that.index]
+            }】这学期的成绩还没有呢，请查看上学期的成绩。`
+          });
         that.$apply();
       } else {
         dialog.alert({
@@ -200,14 +214,14 @@ export default class SeekScore extends wepy.page {
 }
 .main {
   width: 100%;
-  .text{
-      font-size: 15px;
-      text-align: center;
-      color: #414141;
+  .text {
+    font-size: 15px;
+    text-align: center;
+    color: #414141;
   }
   image {
     width: 100%;
-    background: #ddd;
+    background: rgb(248, 248, 248);;
   }
 }
 
