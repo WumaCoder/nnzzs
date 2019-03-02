@@ -168,26 +168,7 @@ export default class SeekScore extends wepy.page {
     if (this.default) {
       this.index = this.default.seekScore.index;
     } else {
-      let term = terms[this.index];
-
-      methods.getScore(term.xn, term.xq, term.xn * 10 + term.xq).then(res => {
-        if (res.stateCode) {
-          if (res.data.indexOf('http') != -1) that.src = res.data;
-          else
-            dialog.alert({
-              title: '获取失败',
-              message: `您【${
-                that.array[that.index]
-              }】这学期的成绩还没有呢，请查看上学期的成绩。`
-            });
-          that.$apply();
-        } else {
-          dialog.alert({
-            title: '获取失败',
-            message: res.msg
-          });
-        }
-      });
+      this.index = 0;
     }
     this.$apply();
   }

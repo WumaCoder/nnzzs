@@ -161,21 +161,7 @@ export default class SeekScore extends wepy.page {
     if (this.default) {
       this.index = this.default.seekTimetable.index;
     } else {
-      let term = terms[this.index];
-
-      methods
-        .getTimetable(term.xn, term.xq, term.xn * 10 + term.xq)
-        .then(res => {
-          if (res.stateCode) {
-            that.src = res.data;
-            that.$apply();
-          } else {
-            dialog.alert({
-              title: '获取失败',
-              message: res.msg
-            });
-          }
-        });
+      this.index = 0;
     }
     this.$apply();
   }
