@@ -73,9 +73,10 @@ export default class SeekScore extends wepy.page {
 
   data = {
     array: [],
-    index: 0,
+    index: -1,
     terms: [],
-    src: '../img/picture.png'
+    src: '../img/picture.png',
+    default: {}
   };
 
   components = {};
@@ -163,30 +164,51 @@ export default class SeekScore extends wepy.page {
       that.array.push(item.show);
     });
     this.terms = terms;
-    let term = terms[0];
+    this.default = methods.getStorageJson('default');
+    if (this.default) {
+      this.index = this.default.seekScore.index;
+    } else {
+      let term = terms[this.index];
 
-    methods.getScore(term.xn, term.xq, term.xn * 10 + term.xq).then(res => {
-      if (res.stateCode) {
-        if (res.data.indexOf('http') != -1) that.src = res.data;
-        else
+      methods.getScore(term.xn, term.xq, term.xn * 10 + term.xq).then(res => {
+        if (res.stateCode) {
+          if (res.data.indexOf('http') != -1) that.src = res.data;
+          else
+            dialog.alert({
+              title: '获取失败',
+              message: `您【${
+                that.array[that.index]
+              }】这学期的成绩还没有呢，请查看上学期的成绩。`
+            });
+          that.$apply();
+        } else {
           dialog.alert({
             title: '获取失败',
-            message: `您【${
-              that.array[that.index]
-            }】这学期的成绩还没有呢，请查看上学期的成绩。`
+            message: res.msg
           });
-        that.$apply();
-      } else {
-        dialog.alert({
-          title: '获取失败',
-          message: res.msg
-        });
-      }
-    });
+        }
+      });
+    }
     this.$apply();
   }
 
   onShow() {}
+
+  onUnload() {
+    if (!this.default) {
+      //如果不存在 初始化
+      this.default = {
+        seekScore: {
+          index: 0
+        },
+        seekTimetable: {
+          index: 0
+        }
+      };
+    }
+    this.default.seekScore.index = this.index;
+    methods.setStorageJson('default', this.default);
+  }
 }
 </script>
 

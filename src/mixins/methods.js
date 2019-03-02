@@ -9,9 +9,9 @@ let host = "https://wmtest.xyz:8000/nnz";
 let setStorageJson = (key, value) => {
     try {
         wx.setStorageSync(key, JSON.stringify(value))
-        return true;
+        return 1;
     } catch (e) {
-        return false;
+        return 0;
     }
 }
 /**
@@ -22,7 +22,7 @@ let getStorageJson = (key) => {
     try {
         return JSON.parse(wx.getStorageSync(key));
     } catch (error) {
-        return false;
+        return 0;
     }
 
 }
