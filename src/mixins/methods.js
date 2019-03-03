@@ -106,7 +106,7 @@ let gen = (username, py = 0) => {
  * @param {*} xq 学期
  * @param {*} xnxq 学年学期
  */
-let getScore = (xn, xq, xnxq) => {
+let getScore = (xn, xq, xnxq, sj) => {
     wx.showLoading({
         title: "加载成绩单中",
         mask: true
@@ -115,7 +115,7 @@ let getScore = (xn, xq, xnxq) => {
         let next = true;
         try {
             while (next) {
-                let res = await request('/getScore', 'get', { data: { xn, xq, xnxq }, cookies: getStorageJson('Cookie') });
+                let res = await request('/getScore', 'get', { data: { xn, xq, xnxq, sj }, cookies: getStorageJson('Cookie') });
                 let data = res.data;
                 if (data.stateCode == 1 || data.stateCode == 0) {
                     wx.hideLoading();

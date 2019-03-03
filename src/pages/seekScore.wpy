@@ -16,6 +16,14 @@
                 </view>
               </picker>
           </view>
+          <view class='select'>
+              <!--有效成绩/原始成绩-->
+              <picker bindchange="SjbindPickerChange" value="{{sjIndex}}" range="{{sjArray}}">
+                <view class="picker">
+                 {{sjArray[sjIndex]}}
+                </view>
+              </picker>
+          </view>
           <view class='down' @tap="select(-1)">
               <!--下一学期-->
               <van-icon name="arrow-down" color="#fff"/>
@@ -74,6 +82,8 @@ export default class SeekScore extends wepy.page {
   data = {
     array: [],
     index: -1,
+    sjIndex:1,
+    sjArray:['原始数据','有效成绩'],
     terms: [],
     src: '../img/picture.png',
     default: {}
@@ -82,6 +92,10 @@ export default class SeekScore extends wepy.page {
   components = {};
 
   methods = {
+    SjbindPickerChange(e){
+      let index = e.detail.value;
+      this.sjIndex = index;
+    },
     share() {
       dialog.alert({
         title: '分享',
@@ -130,9 +144,33 @@ export default class SeekScore extends wepy.page {
     index(e, old) {
       let term = this.terms[e];
       let that = this;
-      //   console.log(term, e, old);
+      console.log(term, e, old);
 
-      methods.getScore(term.xn, term.xq, term.xn * 100 + term.xq).then(res => {
+      methods.getScore(term.xn, term.xq, term.xn * 100 + term.xq, this.sjIndex).then(res => {
+        if (res.stateCode) {
+          if (res.data.indexOf('http') != -1) that.src = res.data;
+          else
+            dialog.alert({
+              title: '获取失败',
+              message: `您【${
+                that.array[that.index]
+              }】这学期的成绩还没有呢，请查看上学期的成绩。`
+            });
+        } else {
+          dialog.alert({
+            title: '获取失败',
+            message: res.msg
+          });
+        }
+        that.$apply();
+      });
+    },
+    sjIndex(e, old) {
+      let term = this.terms[this.index];
+      let that = this;
+      console.log(term, e, old);
+
+      methods.getScore(term.xn, term.xq, term.xn * 100 + term.xq, e).then(res => {
         if (res.stateCode) {
           if (res.data.indexOf('http') != -1) that.src = res.data;
           else

@@ -113,10 +113,10 @@ export default class Index extends wepy.page {
     },
     version: {
       //版本信息
-      number: '1.0.4',
+      number: '1.0.5',
       pubdate: '2019.3.2',
       content:
-        '更新内容:\n\r记录上次查看的成绩和课表的年级.\n\r声明:\n\r小程序内的一切内容都是映射的内网的教务管理系统的内容，所以如果数据不全就说明内网教务管理也没有数据。\n\r感谢的大家的支持谢谢，如果小程序出现了什么问题您可以去问题反馈给与我们反馈，我们会在下一版本解决问题。'
+        '更新内容:\n\r添加查成绩新选项（解决查成绩出现的问题）.\n\r声明:\n\r小程序内的一切内容都是映射的内网的教务管理系统的内容，所以如果数据不全就说明内网教务管理也没有数据。\n\r感谢的大家的支持谢谢，如果小程序出现了什么问题您可以去问题反馈给与我们反馈，我们会在下一版本解决问题。'
     },
     ideCode: {
       //验证码对话框
@@ -289,6 +289,31 @@ export default class Index extends wepy.page {
         this.user = config;
       }
     }
+    const updateManager = wx.getUpdateManager();
+
+    updateManager.onCheckForUpdate(function(res) {
+      // 请求完新版本信息的回调
+      console.log(res.hasUpdate);
+    });
+
+    updateManager.onUpdateReady(function() {
+      wx.showModal({
+        title: '更新提示',
+        content: '新版本已经准备好，是否重启应用？（查看更新内容请去 关于我们->版本信息 查看）',
+        success(res) {
+          if (res.confirm) {
+            // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+            updateManager.applyUpdate();
+          }
+        }
+      });
+    });
+
+    updateManager.onUpdateFailed(function() {
+      // 新版本下载失败
+      console.log('update error');
+      
+    });
   }
 
   onShow() {}
