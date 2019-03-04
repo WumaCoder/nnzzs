@@ -205,6 +205,7 @@ export default class SeekScore extends wepy.page {
     this.default = methods.getStorageJson('default');
     if (this.default) {
       this.index = this.default.seekScore.index;
+      this.sjIndex = this.default.seekScore.sjIndex;
     } else {
       this.index = 0;
     }
@@ -218,7 +219,8 @@ export default class SeekScore extends wepy.page {
       //如果不存在 初始化
       this.default = {
         seekScore: {
-          index: 0
+          index: 0,
+          sjIndex:1
         },
         seekTimetable: {
           index: 0
@@ -226,6 +228,8 @@ export default class SeekScore extends wepy.page {
       };
     }
     this.default.seekScore.index = this.index;
+    this.default.seekScore.sjIndex = this.sjIndex;
+    
     methods.setStorageJson('default', this.default);
   }
 }
