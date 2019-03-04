@@ -21,6 +21,8 @@
               <van-icon name="arrow-down" color="#fff"/>
           </view>
       </view>
+      <ad unit-id="adunit-51e4d18c78cb43e6"></ad>
+      <!-- 广告2 -->
       <view class='main'>
           <!--中间显示图片-->
           <image src="{{src}}" @tap="open"/>
