@@ -16,6 +16,14 @@
                 </view>
               </picker>
           </view>
+          <view class='select'>
+              <!--课表类型-->
+              <picker bindchange="bindPickerChangeType" value="{{typeIndex}}" range="{{typeArr}}">
+                <view class="picker">
+                 {{typeArr[typeIndex]}}
+                </view>
+              </picker>
+          </view>
           <view class='down' @tap="select(-1)">
               <!--下一学期-->
               <van-icon name="arrow-down" color="#fff"/>
@@ -78,7 +86,9 @@ export default class SeekScore extends wepy.page {
     index: -1,
     terms: [],
     src: '../img/picture.png',
-    default:{}
+    default: {},
+    typeArr:['选修课表','完整课表'],
+    typeIndex:0
   };
 
   components = {};
@@ -123,6 +133,11 @@ export default class SeekScore extends wepy.page {
       //下拉列表
       let index = e.detail.value;
       this.index = index;
+    },
+    bindPickerChangeType(e){
+      //下拉列表
+      let index = e.detail.value;
+      this.typeIndex = index;
     }
   };
 
