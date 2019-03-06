@@ -1,5 +1,5 @@
 import wepy from "wepy";
-let host = "https://wmtest.xyz:8000/nnz";
+let host = "http://localhost:8000/nnz";//"https://wmtest.xyz:8000/nnz";
 
 /**
  * 
