@@ -87,8 +87,8 @@ export default class SeekScore extends wepy.page {
     terms: [],
     src: '../img/picture.png',
     default: {},
-    typeArr:['选修课表','完整课表'],
-    typeIndex:0
+    typeArr: ['选修课表', '完整课表'],
+    typeIndex: 0
   };
 
   components = {};
@@ -134,7 +134,7 @@ export default class SeekScore extends wepy.page {
       let index = e.detail.value;
       this.index = index;
     },
-    bindPickerChangeType(e){
+    bindPickerChangeType(e) {
       //下拉列表
       let index = e.detail.value;
       this.typeIndex = index;
@@ -148,20 +148,71 @@ export default class SeekScore extends wepy.page {
       let term = this.terms[e];
       let that = this;
       //   console.log(term, e, old);
+      if (this.typeIndex == 0){
+        methods
+          .getTimetable(term.xn, term.xq, term.xn * 10 + term.xq)
+          .then(res => {
+            if (res.stateCode) {
+              that.src = res.data;
+            } else {
+              dialog.alert({
+                title: '获取失败',
+                message: res.msg
+              });
+            }
+            that.$apply();
+          });
+      }else {
+        methods
+          .getTimetableAll(term.xn, term.xq, term.xn * 10 + term.xq)
+          .then(res => {
+            if (res.stateCode) {
+              that.src = res.data;
+            } else {
+              dialog.alert({
+                title: '获取失败',
+                message: res.msg
+              });
+            }
+            that.$apply();
+          });
+      }
+    },
+    typeIndex(ne, old) {
+      let e = this.index;
+      let term = this.terms[e];
+      let that = this;
+      //   console.log(term, e, old);
+      if (ne == 0){
+        methods
+          .getTimetable(term.xn, term.xq, term.xn * 10 + term.xq)
+          .then(res => {
+            if (res.stateCode) {
+              that.src = res.data;
+            } else {
+              dialog.alert({
+                title: '获取失败',
+                message: res.msg
+              });
+            }
+            that.$apply();
+          });
+      }else {
+        methods
+          .getTimetableAll(term.xn, term.xq, term.xn * 10 + term.xq)
+          .then(res => {
 
-      methods
-        .getTimetable(term.xn, term.xq, term.xn * 10 + term.xq)
-        .then(res => {
-          if (res.stateCode) {
-            that.src = res.data;
-          } else {
-            dialog.alert({
-              title: '获取失败',
-              message: res.msg
-            });
-          }
-          that.$apply();
-        });
+            if (res.stateCode) {
+              that.src = res.data;
+            } else {
+              dialog.alert({
+                title: '获取失败',
+                message: res.msg
+              });
+            }
+            that.$apply();
+          });
+      }
     }
   };
 

@@ -1,5 +1,5 @@
 import wepy from "wepy";
-let host = "http://localhost:8000/nnz";//"https://wmtest.xyz:8000/nnz";
+let host = "http://192.168.43.29:8000/nnz";//"https://wmtest.xyz:8000/nnz";
 
 /**
  * 
@@ -168,6 +168,37 @@ let getTimetable = (xn, xq, xnxq) => {
     })
 }
 
+let getTimetableAll = (xn, xq, xnxq) => {
+    wx.showLoading({
+        title: "加载课程表中",
+        mask: true
+    });
+    return new Promise(async (resolve) => {
+        let next = true;
+        try {
+            while (next) {
+                let res = await request('/getTimetableAll', 'get', { data: { xn, xq, xnxq }, cookies: getStorageJson('Cookie') });
+                let data = res.data;
+                if (data.stateCode == 1 || data.stateCode == 0) {
+                    wx.hideLoading();
+                    next = false;
+                    resolve(data);
+                }
+                console.log(res);
+                
+            }
+        } catch (err) {
+            next = false;
+            wx.hideLoading();
+            wx.showToast({
+                title: '网络错误',
+                icon: 'fail',
+                duration: 2000
+            })
+        }
+    })
+}
+
 module.exports = {
     setStorageJson,//保存json类型的缓存
     getStorageJson,//读取json数据
@@ -176,5 +207,6 @@ module.exports = {
     wx,//wx api接口
     gen,//生成学期
     getScore,//获取成绩
-    getTimetable
+    getTimetable,
+    getTimetableAll
 }
