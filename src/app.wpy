@@ -22,7 +22,9 @@ export default class extends wepy.app {
       'pages/seekScore',
       'pages/seekTimetable',
       'pages/notice',
-      'pages/more'
+      'pages/more',
+      'pages/exam',
+      'pages/gregory'
     ],
     window: {
       backgroundTextStyle: 'light',

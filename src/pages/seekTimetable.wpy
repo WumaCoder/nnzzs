@@ -18,9 +18,9 @@
           </view>
           <view class='select'>
               <!--课表类型-->
-              <picker bindchange="bindPickerChangeType" value="{{typeIndex}}" range="{{typeArr}}">
+              <picker bindchange="bindPickerChangeType" value="{{indexType}}" range="{{arrayType}}">
                 <view class="picker">
-                 {{typeArr[typeIndex]}}
+                 {{arrayType[indexType]}}
                 </view>
               </picker>
           </view>
@@ -86,9 +86,8 @@ export default class SeekScore extends wepy.page {
     index: -1,
     terms: [],
     src: '../img/picture.png',
-    default: {},
-    typeArr: ['选修课表', '完整课表'],
-    typeIndex: 0
+    arrayType: ['选修课表', '完整课表'],
+    indexType: 0
   };
 
   components = {};
@@ -137,7 +136,7 @@ export default class SeekScore extends wepy.page {
     bindPickerChangeType(e) {
       //下拉列表
       let index = e.detail.value;
-      this.typeIndex = index;
+      this.indexType = index;
     }
   };
 
@@ -148,7 +147,7 @@ export default class SeekScore extends wepy.page {
       let term = this.terms[e];
       let that = this;
       //   console.log(term, e, old);
-      if (this.typeIndex == 0){
+      if (this.indexType == 0){
         methods
           .getTimetable(term.xn, term.xq, term.xn * 10 + term.xq)
           .then(res => {
@@ -178,7 +177,7 @@ export default class SeekScore extends wepy.page {
           });
       }
     },
-    typeIndex(ne, old) {
+    indexType(ne, old) {
       let e = this.index;
       let term = this.terms[e];
       let that = this;
@@ -222,33 +221,26 @@ export default class SeekScore extends wepy.page {
     let terms = methods.getStorageJson('Term1'); //读取学期列表
     let that = this;
     terms.forEach(item => {
-      that.array.push(item.show);
+      that.array.push(item.text);
     });
     this.terms = terms;
-    this.default = methods.getStorageJson('default');
-    if (this.default) {
-      this.index = this.default.seekTimetable.index;
+
+    let {seekTimetable} = methods.getStorageJson('default');//获取默认值
+    if (seekTimetable) {//检查默认值是否存在
+      this.index = seekTimetable.index;
+      this.indexType = seekTimetable.indexType;
     } else {
       this.index = 0;
     }
+
     this.$apply();
   }
 
   onShow() {}
   onUnload() {
-    if (!this.default) {
-      //如果不存在 初始化
-      this.default = {
-        seekScore: {
-          index: 0
-        },
-        seekTimetable: {
-          index: 0
-        }
-      };
-    }
-    this.default.seekTimetable.index = this.index;
-    methods.setStorageJson('default', this.default);
+    let def = methods.getStorageJson("default");
+    def.seekTimetable = {index:this.index,indexType:this.indexType};
+    methods.setStorageJson('default', def);
   }
 }
 </script>

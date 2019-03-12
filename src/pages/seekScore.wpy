@@ -18,9 +18,9 @@
           </view>
           <view class='select'>
               <!--有效成绩/原始成绩-->
-              <picker bindchange="SjbindPickerChange" value="{{sjIndex}}" range="{{sjArray}}">
+              <picker bindchange="bindPickerChangeSj" value="{{indexSj}}" range="{{arraySj}}">
                 <view class="picker">
-                 {{sjArray[sjIndex]}}
+                 {{arraySj[indexSj]}}
                 </view>
               </picker>
           </view>
@@ -84,19 +84,18 @@ export default class SeekScore extends wepy.page {
   data = {
     array: [],
     index: -1,
-    sjIndex:1,
-    sjArray:['原始数据','有效成绩'],
+    indexSj:1,
+    arraySj:['原始数据','有效成绩'],
     terms: [],
-    src: '../img/picture.png',
-    default: {}
+    src: '../img/picture.png'
   };
 
   components = {};
 
   methods = {
-    SjbindPickerChange(e){
+    bindPickerChangeSj(e){
       let index = e.detail.value;
-      this.sjIndex = index;
+      this.indexSj = index;
     },
     share() {
       dialog.alert({
@@ -148,7 +147,7 @@ export default class SeekScore extends wepy.page {
       let that = this;
       console.log(term, e, old);
 
-      methods.getScore(term.xn, term.xq, term.xn * 100 + term.xq, this.sjIndex).then(res => {
+      methods.getScore(term.xn, term.xq, term.xn * 100 + term.xq, this.indexSj).then(res => {
         if (res.stateCode) {
           if (res.data.indexOf('http') != -1) that.src = res.data;
           else
@@ -167,7 +166,7 @@ export default class SeekScore extends wepy.page {
         that.$apply();
       });
     },
-    sjIndex(e, old) {
+    indexSj(e, old) {
       let term = this.terms[this.index];
       let that = this;
       console.log(term, e, old);
@@ -201,13 +200,14 @@ export default class SeekScore extends wepy.page {
     console.log(terms);
 
     terms.forEach(item => {
-      that.array.push(item.show);
+      that.array.push(item.text);
     });
-    this.terms = terms;
-    this.default = methods.getStorageJson('default');
-    if (this.default) {
-      this.index = this.default.seekScore.index;
-      //this.sjIndex = this.default.seekScore.sjIndex; //暂时不更新
+    this.terms = terms;//学期列表
+    
+    let {seekScore} = methods.getStorageJson('default');//获取默认值
+    if (seekScore) {//检查默认值是否存在
+      this.index = seekScore.index;
+      this.indexSj = seekScore.indexSj;
     } else {
       this.index = 0;
     }
@@ -217,22 +217,9 @@ export default class SeekScore extends wepy.page {
   onShow() {}
 
   onUnload() {
-    if (!this.default) {
-      //如果不存在 初始化
-      this.default = {
-        seekScore: {
-          index: 0,
-          sjIndex:1
-        },
-        seekTimetable: {
-          index: 0
-        }
-      };
-    }
-    this.default.seekScore.index = this.index;
-    this.default.seekScore.sjIndex = this.sjIndex;
-    
-    methods.setStorageJson('default', this.default);
+    let def = methods.getStorageJson("default");
+    def.seekScore = {index:this.index,indexSj:this.indexSj};
+    methods.setStorageJson('default', def);
   }
 }
 </script>

@@ -110,15 +110,23 @@ export default class Main extends wepy.page {
 
   onLoad() {
     //console.log(this);
-    let query = this.$wxpage.options;
+    if(!methods.getStorageJson('default')){
+      let def = {};//初始化默认值值
+      methods.setStorageJson('default', def);
+    }
+    let query = this.$wxpage.options;//获取传值
     let that = this;
     let terms = methods.gen(query.username);
     that.user.username = query.username;
     that.user.name = query.name;
-    that.user.term = terms[0].show;
+    that.user.term = terms[0].text;
     that.$apply();
     methods.setStorageJson('Term', terms); //获取学期
-    methods.setStorageJson('Term1', methods.gen(query.username, 1)); //学期多一个
+    methods.setStorageJson('Term1', methods.gen(query.username, 1)); //学期多一个，写的不好
+    /**
+     * Term 从开学到当前学期
+     * Term1 学期个数加+1条
+     */
   }
 
   onShow() {}

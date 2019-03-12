@@ -1,32 +1,89 @@
 <!-- 更多功能 -->
 <template>
-  <view class='container'></view>
+  <view class="menu">
+    <view class="row">
+      <!--横向-->
+      <view
+        @tap="navigate('exam')"
+        class="item"
+        style="background:url('https://s2.ax1x.com/2019/03/12/AipBkT.png'); background-size:100% 100%"
+      >
+        <!--元素-->
+        <view class="title">
+          <!--标题-->
+          考试安排
+        </view>
+      </view>
+      <view
+        @tap="navigate('gregory')"
+        class="item"
+        style="background:url('https://s2.ax1x.com/2019/03/12/AipW0x.png'); background-size:100% 100%"
+      >
+        <!--元素-->
+        <view class="title">
+          <!--标题-->
+          正选结果
+        </view>
+      </view>
+    </view>
+    <span>更多功能，敬请期待...</span>
+  </view>
 </template>
 
+
 <script>
-  import wepy from 'wepy';
-  export default class More extends wepy.page {
-    config = {
-      navigationBarTitleText: "更多功能",
-    };
+import wepy from 'wepy';
+export default class More extends wepy.page {
+  config = {
+    navigationBarTitleText: '更多功能'
+  };
 
-    data = {};
+  data = {};
 
-    components = {};
+  components = {};
 
-    methods = {};
+  methods = {
+    navigate(url) {
+      wepy.navigateTo({ url: url });
+    }
+  };
 
-    events = {};
+  events = {};
 
-    watch = {};
+  watch = {};
 
-    computed = {};
+  computed = {};
 
-    onLoad() { };
+  onLoad() {}
 
-    onShow() { };
-  }
+  onShow() {}
+}
 </script>
 
 <style lang='less'>
+.menu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: center;
+  color: rgb(44, 44, 44);
+  .row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    .item {
+      width: 50%;
+      height: 160px;
+      margin: 10px;
+      border: 1px rgb(112, 112, 112) solid;
+      .title {
+        background: rgba(0, 0, 0, 0.507);
+        color: #fff;
+        text-align: center;
+        position: relative;
+        padding: 3px;
+      }
+    }
+  }
+}
 </style>

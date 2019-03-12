@@ -229,6 +229,7 @@ export default class Index extends wepy.page {
             let data = res.data;
             if (data.stateCode) {
               if (data.stateCode == 1) {
+                that.user.ideCode = "";
                 that.ideCode.show = true;
                 next = false;
                 that.ideCode.src = data.data;
