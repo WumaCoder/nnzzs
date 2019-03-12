@@ -38,11 +38,11 @@
         </view>
         <view class='row'>
             <!--横向-->
-            <view @tap="navigate('notice')" class='item' style="background:url('https://s2.ax1x.com/2019/01/23/kAOUkq.jpg'); background-size:100% 100%">
+            <view @tap="navigate('more')" class='item' style="background:url('https://s2.ax1x.com/2019/03/12/APjU3R.png'); background-size:100% 100%">
                 <!--元素-->
                 <view class='title'>
                     <!--标题-->
-                    公告信息    
+                    更多功能    
                 </view>
             </view>
             <view @tap="navigate('about')" class='item' style="background:url('https://s2.ax1x.com/2019/01/23/kAOt7n.jpg'); background-size:100% 100%">

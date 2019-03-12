@@ -353,8 +353,7 @@ export default class Index extends wepy.page {
     }
   }
 }
-.btn_parmary {
-}
+
 .version {
   position: fixed;
   bottom: 0;
